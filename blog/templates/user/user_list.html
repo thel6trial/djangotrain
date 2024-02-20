@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="account-page">
+    <div class="profile">
+        <div class="profile-img">
+            {% load static %}
+            <img src="{% static 'assets/img/product/img5.jpg' %}">
+            <h2>{{ user.username }}</h2>
+        </div>						
+        <ul>
+            <li><a href="account.html" class="active">Account <span>></span></a></li>
+           
+        </ul>
+    </div>
+   
+    {% if user_list %}
+    <div class="account-detail">					
+        <h2>User Lists</h2>
+        <div class="order-detail">
+            <table id = "usertable">
+                <thead>
+                    <tr>
+                        <th>UserName</th>
+                        <th>Birthday</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Blog Count</th>
+                        <th>Role</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in user_list %}
+                    <tr>
+                        {% load custom_filters %}
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.birtday }}</td>
+                        <td>{{user.first_name}}</td>
+                        <td>{{user.last_name}}</td>
+                        <td>{{ user.blogCount }} </td>
+                        <td>{{ user|get_user_role }}</td>
+                        <td><a href="{% url 'blog:userUpdate' pk=user.id %}">Update User</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <p>No users are available.</p>
+    {% endif %} 				
+</div>
+{% endblock %}

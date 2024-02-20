@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="breadcrumb">
+    <ul>
+        <li><a href="{% url 'blog:index'%}">Home</a></li>
+        <li> / </li>
+        <li><a href="">Detail</a></li>
+    </ul>
+</div> <!-- End of Breadcrumb-->
+
+<div class="single-product">
+    <div class="images-section">
+        <div class="larg-img">
+            {% load static %}
+            <img src="{% static 'blog/images/' %}{{ post.postImage }}" />
+        </div>
+        
+    </div> <!-- End of Images Section-->
+
+    <div class="product-detail">
+        <div class="product-name">
+            <h2>{{ post.postTitle }}</h2>
+        </div>
+        <div class="product-price">
+            <h3>{{ post.postDate }}</h3>
+        </div>
+        <hr>
+        <div class="product-description">
+            <p>{{ post.postContent|safe }}</p>
+        </div>
+        <hr>
+        <hr>
+        <div class="product-meta">
+            <p><b>Category: </b> Blog</p>
+            <p><b>Share This Product: </b> Facebook, Twitter</p>
+        </div>
+        <a href="{% url 'blog:blogUpdate' pk=post.postID %}">Update Blog</a>
+        <div class="product-cart">
+            
+            <form id="wishlist-form" action="{% url 'blog:blogDelete' pk=post.postID %}" method="post">
+                <div class="form-group">
+                    {% csrf_token %}
+                    <input type="submit" value="Xóa">
+                </div>
+            </form>
+        </div>
+    </div> <!-- End of Product Detail-->
+</div>
+<hr>
+<div class="account-page">
+    <div class="account-detail">
+        <h2>Recommend this Blog to your Friend</h2>
+        <div class="billing-detail">					
+            <form action="{% url 'blog:recommendBlog' pk=post.postID %}"  method="post" enctype="multipart/form-data" class="checkout-form">
+                {% csrf_token %}
+                
+                <div id="form-wrapper">
+                    <div class="form-group">
+                        <label for="email">Địa chỉ Email người nhận</label>
+                        <input type="text" id="email" name="email">
+                    </div>
+                      
+                    <div class="form-group">
+                        <label></label>
+                        <input type="submit" id="update" name="update" value="Submit">
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>				
+</div>		
+<div class="product-long-description">
+    <h3>Product Description</h3>
+    <p>
+        {{post.postContent|safe}} 
+    </p>
+    
+</div>
+
+<h2>Bình luận</h2>
+<form action="{% url 'blog:detail' pk=post.postID %}" method="post">
+  {% csrf_token %}
+  <label for="content"> Nội dung bình luận </label>
+  <textarea type="text" id="content" name="content"  required ></textarea>
+
+  <input type="hidden" name="parent" value="" />
+  <button type="submit">Gửi bình luận</button>
+</form>
+
+{% for comment in comments %}
+  <div class="comment">
+    <p><strong>{{ comment.user.username }}</strong></p>
+    <p>{{ comment.content }}</p>
+
+    <button hx-get="{% url 'blog:load_replies' pk=comment.id %}" hx-target="#replies-{{ comment.id }}" hx-trigger="click" hx-swap="outerHTML">Xem thêm</button>
+    <div id="replies-{{ comment.id }}"></div>
+
+    <form method="post" action="{% url 'blog:detail' pk=post.postID %}">
+      {% csrf_token %}
+      <textarea type="text" id="content" name="content"  required ></textarea>
+      <input type="hidden" name="parent" value="{{ comment.id }}">
+      <button type="submit">Trả lời</button>
+    </form>
+  </div>
+{% empty %}
+  <p>Chưa có bình luận nào.</p>
+{% endfor %}
+{% for message in messages %}
+	<script>
+		alert("{{ message }}");
+	</script>
+{% endfor %}
+
+{% endblock %}
+
+

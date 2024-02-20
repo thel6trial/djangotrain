@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="breadcrumb">
+    <ul>
+        <li><a href="{% url 'blog:index' %}">Home</a></li>
+        <li> / </li>
+        <li>Blog</li>
+    </ul>
+</div> <!-- End of Breadcrumb-->
+
+<div class="account-page">
+    <div class="profile">
+        <div class="profile-img">
+            {% load static %}
+            <img src="{% static 'assets/img/product/img5.jpg' %}">
+            <h2>Blog Detail</h2>
+            <p></p>
+        </div>
+        <ul>
+            <li><a href="account.html" class="active">Blog <span>></span></a></li>
+            <li><a href="">Logout <span>></span></a></li>
+        </ul>
+    </div>
+    <div class="account-detail">
+        <h2>Blog detail</h2>
+        <div class="billing-detail">					
+            <form {% if post.postID %} id="form" action="{% url 'blog:blogUpdate' pk=post.postID %}" hx-post="{% url 'blog:blogUpdate' pk=post.postID %}" hx-target="#form-wrapper" hx-select="#group" hx-swap="outerHTML" {% else %} action="{% url 'blog:blogCreate' %}" {% endif%} method="post" enctype="multipart/form-data" class="checkout-form">
+                {% csrf_token %}
+                
+                <div id="form-wrapper">
+                    <div class="form-group" id="group">
+                        {{form.media}}  
+                        {% for field in form %}
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {{ field.errors }}
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="schedulePost">Lập lịch đăng bài</label>
+                        <input type="checkbox" id="schedulePost" name="schedulePost">
+                    </div>
+                      
+                    <div class="form-group" id="scheduleDateGroup" style="display: none;">
+                        <label for="scheduleDate">Ngày và giờ đăng bài</label>
+                        <input type="datetime-local" id="scheduleDate" name="scheduleDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label></label>
+                        <input type="submit" id="update" name="update" value="Submit">
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>				
+</div>		
+
+<script>
+    document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        // Ngăn chặn hành vi mặc định của phím Enter (tránh gửi form)
+        event.preventDefault();
+        
+        // Gửi yêu cầu HTMX khi nhấn Enter
+        var form = document.getElementById('form');
+        if (form) {
+            var url = form.getAttribute('hx-post');
+            var target = form.getAttribute('hx-target');
+            var select = form.getAttribute('hx-select');
+            var swap = form.getAttribute('hx-swap');
+
+            var formData = new FormData(form);
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'HX-POST': 'true'
+                },
+                body: formData
+            }).then(function(response) {
+                // if (response.ok) {
+                //     // Xử lý phản hồi thành công (nếu cần)
+                //     if (target && swap) {
+                //         var targetElement = document.querySelector(target);
+                //         if (targetElement) {
+                //             response.text().then(function(content) {
+                //                 var tempElement = document.createElement('div');
+                //                 tempElement.innerHTML = content;
+                //                 var newForm = tempElement.querySelector('form');
+                //                 if (newForm) {
+                //                     targetElement.outerHTML = newForm.outerHTML;
+                //                     var selectedElement = document.querySelector(select);
+                //                     if (selectedElement) {
+                //                         selectedElement.focus();
+                //                     }
+                //                 }
+                //             });
+                //         }
+                //     }
+                // } else {
+                // }
+            }).catch(function(error) {
+            });
+        }
+    }
+});
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const schedulePostCheckbox = document.getElementById("schedulePost");
+      const scheduleDateGroup = document.getElementById("scheduleDateGroup");
+      const scheduleDateInput = document.getElementById("scheduleDate");
+      
+      schedulePostCheckbox.addEventListener("change", function() {
+        if (schedulePostCheckbox.checked) {
+          scheduleDateGroup.style.display = "block";
+          scheduleDateInput.value = "";
+        } else {
+          scheduleDateGroup.style.display = "none";
+        }
+      });
+    });
+  </script>
+{% endblock %}

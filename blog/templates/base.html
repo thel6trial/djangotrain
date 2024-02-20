@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+	<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="{% static 'assets/ckeditor/ckeditor.css' %}">
+    <script src="{% static 'assets/ckeditor/ckeditor/ckeditor.js' %}"></script>
+	<script src="{% static 'assets/ckeditor/ckeditor-init.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" >
+	<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    {% block header %}
+    <header>
+		<div class="container">
+			<div class="brand">
+				<div class="logo">
+					<a href="index.html">
+						<img src="{% static 'assets/img/icons/online_shopping.png' %}">
+						<div class="logo-text">
+							<p class="big-logo">ONLINE</p>
+							<p class="small-logo">CUSTOMIZE BLOG</p>
+						</div>
+					</a>
+				</div> <!-- logo -->
+			</div> 
+
+			<div class="menu-bar">
+				<div class="menu">
+					<ul>
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'blog:index' %}">Home</a></li>
+                          <li><a href="{% url 'blog:user' %}">User</a></li>
+                          <li>
+                            <form action="{% url 'blog:logout' %}" method="post">
+                              {% csrf_token %}
+                              <input type="submit" value="Logout">
+                            </form>
+                          </li>
+                        {% else %}
+                          <li><a href="{% url 'blog:login' %}">Login</a></li>
+                          <li><a href="{% url 'blog:register' %}">Register</a></li>
+                        {% endif %}
+                        
+                      </ul>
+				</div>
+			</div> 
+		</div> 
+	</header> 
+    {% endblock %}
+
+    <div class="container">
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    {% block footer %}
+    <footer>
+		<div class="container">
+			<div class="footer-widget">
+				<div class="widget">
+					<div class="widget-heading">
+						<h3>Important Link</h3>
+					</div>
+					<div class="widget-content">
+						<ul>
+							<li><a href="{% url 'blog:index' %}">About</a></li>
+							<li><a href="">Contact</a></li>
+							<li><a href="">Post Policy</a></li>
+							<li><a href="">Terms & Conditions</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="widget">
+					<div class="widget-heading">
+						<h3>Information</h3>
+					</div>
+					<div class="widget-content">
+						<ul>
+							<li><a href="account.html">My Account</a></li>
+							<li><a href="orders.html">My Blog</a></li>
+							<li><a href="">Reset Password</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="widget">
+					<div class="widget-heading">
+						<h3>Follow us</h3>
+					</div>
+					<div class="widget-content">
+						<div class="follow">
+							<ul>
+								<li><a href="#"><img src="{% static 'assets/img/icons/facebook.png' %}"></a></li>
+								<li><a href="#"><img src="{% static 'assets/img/icons/twitter.png' %}"></a></li>
+								<li><a href="#"><img src="{% static 'assets/img/icons/instagram.png' %}"></a></li>
+							</ul>
+						</div>						
+					</div>
+					<div class="widget-heading">
+						<h3>Subscribe for Newsletter</h3>
+					</div>
+					<div class="widget-content">
+						<div class="subscribe">
+							<form>
+								<div class="form-group">
+									<input type="text" class="form-control" name="subscribe" placeholder="Email">
+									<img src="{% static 'assets/img/icons/paper_plane.png' %}">
+								</div>
+							</form>
+						</div>						
+					</div>
+				</div>
+			</div> 
+			<div class="footer-bar">
+				<div class="copyright-text">
+					<p>Copyright 2024 - All Rights Reserved</p>
+				</div>
+				<div class="payment-mode">
+					<img src="{% static 'assets/img/icons/paper_money.png' %}">
+					<img src="{% static 'assets/img/icons/visa.png' %}">
+					<img src="{% static 'assets/img/icons/mastercard.png' %}">
+				</div>
+			</div> 
+		</div>
+	</footer> 
+	<script>
+		const notifyScoket = new WebSocket(
+			'ws://'
+			+ window.location.host
+			+ '/ws/notify/'
+		);
+
+		// on socket open
+		notifyScoket.onopen = function (e) {
+			console.log('Socket successfully connected.');
+		};
+
+		// on socket close
+		notifyScoket.onclose = function (e) {
+			console.log('Socket closed unexpectedly');
+		};
+
+		// on receiving message on group
+		notifyScoket.onmessage = function (e) {
+			const data = JSON.parse(e.data);
+			const message = data.message;
+			alert(message);
+		};
+	</script>
+    {% endblock %}
+
+	<script>
+		$(document).ready(function() {
+			$('#usertable').DataTable();
+		});
+	</script>
+
+</body>
+
+</html>

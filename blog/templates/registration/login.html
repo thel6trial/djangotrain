@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="account-page">
+    
+    <div class="account-detail">
+        <h2>Login</h2>
+        <div class="billing-detail">					
+            <form action="{% url 'blog:login' %}" method="post" class="checkout-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username"> UserName </label>
+                    <input type="text" id="username" name="username"  required >
+                </div>
+                <div class="form-group">
+                    <label for="password"> Password </label>
+                    <input type="text" id="password" name="password"  required >
+                </div>
+                <div class="form-group">
+                    <input type="hidden" name="next" value="{{next}}" />
+                </div>
+                
+                <div class="form-group">
+                    {{ error_message }}
+                <div class="form-group">
+                    <label></label>
+                    <input type="submit" value="Submit">
+                </div>
+            </form>		
+            <p><a href="{% url 'blog:register' %}">Register</a></p>
+        </div>
+    </div>		
+    <div class="account-detail">
+        <p>Or log in with:</p>
+        <div class="billing-detail">
+            <div class="form-group">
+                {% load socialaccount %}
+                <a href="{% url 'blog:google_auth' %}">Login with Google</a>
+            </div>
+        </div>
+    </div>		
+    <div class="account-detail">
+        <p>Or log in with:</p>
+        <div class="billing-detail">
+            <div class="form-group">
+                {% load socialaccount %}
+                <a href="{% url 'blog:facebook_auth' %}">Login with Facebook</a>
+        </div>
+    </div>		
+    <div class="account-detail">
+        <p>Or log in with:</p>
+        <div class="billing-detail">
+            <div class="form-group">
+                {% load socialaccount %}
+                <a href="{% url 'blog:twitter_auth' %}">Login with Twitter</a>
+        </div>
+    </div>	
+    <div class="account-detail">
+        <p>Or log in with:</p>
+        <div class="billing-detail">
+            <div class="form-group">
+                {% load socialaccount %}
+                <a href="{% url 'blog:line_auth' %}">Login with LINE</a>
+        </div>
+    </div>		
+</div>		
+{% endblock %}
+

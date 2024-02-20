@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="account-page">
+    
+    <div class="account-detail">
+        <h2>Blog detail</h2>
+        <div class="billing-detail">					
+            <form action="{% url 'blog:register' %}" method="post" class="checkout-form">
+                {% csrf_token %}
+                
+                    <div class="form-group">
+                        <label for="id"> UserID </label>
+                        <input type="number" id="id" name="id" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="username"> Username </label>
+                        <input type="text" id="username" name="username" required >
+
+                    </div>
+                <div class="form-group">
+                    <label for="password"> Password </label>
+                    <input type="text" id="password" name="password" required >
+                </div>
+                
+                <div class="form-group">
+                    <label for="birtday"> Birthday </label>
+                    <input type="text" id="birtday" name="birtday" required />
+                </div>
+                <div class="form-inline">
+                <div class="form-group">
+                    <label for="first_name"> First Name </label>
+                    <input type="text" name="first_name" id="first_name" required >
+                </div>
+                <div class="form-group">
+                    <label for="last_name"> Last Name </label>
+                    <input type="text" name="last_name" id="last_name" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="role"> Role Name </label>
+                <select name="role" id="role">
+                    <option value="Viewer">Viewer</option>
+                    <option value="Editor">Editor</option>
+                </select>
+            </div>
+                
+                <div class="form-group">
+                    <label></label>
+                    <input type="submit" id="update" name="update" value="Submit">
+                </div>
+            </form>		
+        </div>
+    </div>				
+</div>	
+{% endblock %}	

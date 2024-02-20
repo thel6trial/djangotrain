@@ -1,0 +1,12 @@
+{% for reply in replies %}
+    <div style="margin-left: 30px;" class="reply">
+        {{ reply.content }}
+        <button hx-get="{% url 'blog:load_replies' pk=reply.id %}" hx-target="#replies-{{ reply.id }}" hx-trigger="click" hx-swap="outerHTML">Xem thêm</button>
+        <div id="replies-{{ reply.id }}"></div>
+        <form>
+            {% csrf_token %}
+            <textarea type="text" id="content" name="content"  required ></textarea>
+            <button hx-post="{% url 'blog:load_replies' pk=reply.id %}" hx-target="#replies-{{ reply.id }}" hx-trigger="click" hx-swap="outerHTML" type="submit">Trả lời</button>
+        </form>
+    </div>
+{% endfor %}

@@ -1,0 +1,11 @@
+Django==4.2.1
+# mysqlclient==2.2.1
+django-ckeditor==6.7.0
+channels==4.0.0
+daphne==4.0.0
+django-guardian==2.4.0
+django-role-permissions==3.2.0
+Pillow==9.2.0
+redis==5.0.1
+celery==5.3.6
+Faker==22.6.0

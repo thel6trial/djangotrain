@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="slider">
+    <div class="slide-1">
+        {% load static %}
+        <img src="{% static 'assets/img/slider/library.jpg' %}">
+        <div class="slider-text">
+            <h3>Your Library</h3>
+            <h2>New knowledge</h2>
+            <a href="#">Register Now</a>
+        </div>
+    </div>
+</div> <!-- slider -->
+<div class="search-bar">
+	<form>
+		<div class="form-group" id="search">
+			{% csrf_token %}
+			<input type="text" id="searchInput" name="searchName" onkeyup="this.setCustomValidity('') // reset the validation on keyup"
+			hx-on:htmx:validation:validate="if(length(this.value) < 5 ) {
+					 this.setCustomValidity('The search name is too short') 
+					 htmx.find('#search').reportValidity()              
+				 }" placeholder="Search...">
+			<button style="margin-top: 30px;" hx-post="{% url 'blog:search' %}" hx-target="#searchResults" hx-select="#searchResults" hx-trigger="click" hx-swap="outerHTML" >Search</button>
+		</div>
+	</form>
+</div>
+
+{% if post_list %}
+			<div class="new-product-section" id="searchResults">
+				<div class="product-section-heading">
+					<h2> All blogs <img src="{% static 'assets/img/icons/increase.png' %}"></h2>
+					<h3> The most favorite blogs of the month </h3>
+				</div>
+				<div class="product-content">
+					{% for post in post_list %}
+					{% if post.postPublished == True %}
+					<div class="product">
+						<a href="{% url 'blog:detail' pk=post.postID %}">
+                            <img src="{% static 'blog/images/' %}{{ post.postImage }}" />
+						</a>
+						<div class="product-detail">
+							<h3>{{ post.postTitle }}</h3>
+							<h2>{{ post.postDate }}</h2>
+							<a href="{% url 'blog:blogUpdate' pk=post.postID %}">Update Blog</a>
+						</div>						
+					</div>
+					{% endif %}
+					{% endfor %}
+			    </div> 
+			<div class="product-content">
+				<div class="product">
+					<div class="product-detail" style ="display: flex;">
+						<a href="{% url 'blog:blogCreate' %}" style="margin-right: 30px;">Create Blog</a>
+						<a href="{% url 'blog:csv' %}">Import from CSV</a>
+					</div>						
+				</div>
+			</div>
+
+			<div class="product-content">
+				<ul style="list-style-type: none; display: flex;">
+					{% if page_obj.has_previous %}
+						<li style="margin-right: 20px;"><a href="?page=1">&laquo;&laquo;</a></li>
+						<li style="margin-right: 20px;"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+					{% else %}
+						<li class="disabled" style="margin-right: 20px;"><span>&laquo;&laquo;</span></li>
+						<li class="disabled" style="margin-right: 20px;"><span>&laquo;</span></li>
+					{% endif %}
+			
+					{% for i in paginator.page_range %}
+					    {% if i == page_obj.number %}
+					    <li class="active" style="margin-right: 20px;"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+				        {% elif i >= page_obj.number|add:"-2" and i <= page_obj.number|add:"2" %}
+					    <li style="margin-right: 20px;"><a href="?page={{ i }}">{{ i }}</a></li>
+				        {% elif i < page_obj.number|add:"-2" and i == 1 %}
+					    <li style="margin-right: 20px;"><a href="?page={{ i }}">{{ i }}</a></li>
+					    <li style="margin-right: 20px;"><span>...</span></li>
+				        {% elif i > page_obj.number|add:"2" and i == paginator.num_pages %}
+				     	<li style="margin-right: 20px;"><span>...</span></li>
+					    <li style="margin-right: 20px;"><a href="?page={{ i }}">{{ i }}</a></li>
+				        {% endif %}
+					{% endfor %}
+			
+					{% if page_obj.has_next %}
+						<li style="margin-right: 20px;"><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+						<li style="margin-right: 20px;"><a href="?page={{ paginator.num_pages }}">&raquo;&raquo;</a></li>
+					{% else %}
+						<li class="disabled" style="margin-right: 20px;"><span>&raquo;</span></li>
+						<li class="disabled" style="margin-right: 20px;"><span>&raquo;&raquo;</span></li>
+					{% endif %}
+				</ul>
+			</div>
+
+
+			{% for message in messages %}
+			<script>
+			  alert("{{ message }}");
+			</script>
+			{% endfor %}
+
+			</script>
+			{% else %}
+            <p>No posts are available.</p>
+            {% endif %} 
+
+	<script>
+		document.getElementById('searchInput').addEventListener('input', function() {
+			htmx.trigger(this, 'hx-get');
+		});
+	</script>
+
+{% endblock %}

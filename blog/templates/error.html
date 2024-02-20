@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="slider">
+    <div class="slide-1">
+        {% load static %}
+        <img src="{% static 'assets/img/slider/library.jpg' %}">
+        <div class="slider-text">
+            <h3>Your Library</h3>
+            <h2>New knowledge</h2>
+            <a href="#">Register Now</a>
+        </div>
+    </div>
+</div> <!-- slider -->
+
+			<div class="new-product-section">
+				<div class="product-section-heading">
+					<h2> Error {{status_code}}</h2>
+					<h3> {{error_message}} </h3>
+				</div>
+				<div class="product-content">
+			    </div> 
+			</div>
+
+{% endblock %}
