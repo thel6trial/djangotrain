@@ -112,19 +112,14 @@ ASGI_APPLICATION_TIMEOUT = 60
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "blogdb",
-        "USER": "root",
-        "PASSWORD": "password",
-        "HOST": "db",
-        "PORT": "3306",
-        'OPTIONS': {
-            'read_default_file': '/opt/lampp/etc/my.cnf',
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 CELERY_APP = 'djangotraining.celery:app'
 CELERY_ACCEPT_CONTENT = ['application/json']

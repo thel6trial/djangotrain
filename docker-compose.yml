@@ -8,7 +8,6 @@ services:
       MYSQL_DATABASE: 'blogdb'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
-    command: --lower_case_table_names=0
     volumes:
       - /tmp/app/mysqld:/var/run/mysqld
       - ./db:/var/lib/mysql
