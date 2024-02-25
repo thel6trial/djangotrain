@@ -14,6 +14,7 @@ class PostCreateForm(forms.ModelForm):
         post_date = cleaned_data.get("postDate")
         postTitle = cleaned_data.get("postTitle")
         postContent = cleaned_data.get("postContent")
+        postImage = cleaned_data.get("postImage")
 
         if post_date and post_date > timezone.now():
             self.add_error("postDate", "The post date cannot be in the future.")

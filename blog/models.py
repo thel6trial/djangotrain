@@ -6,7 +6,7 @@ class User(AbstractUser):
     #userID = models.IntegerField(primary_key = True)
     # userName = models.CharField(max_length = 200)
     # password = models.CharField(max_length = 200)
-    birtday = models.CharField("Birthday", max_length = 200)
+    birtday = models.CharField("Birthday", max_length = 210)
     blogCount = models.IntegerField("Number of Blogs", default = 0)
     # id_token = models.TextField("ID Token", blank=True, null=True)
     # refresh_token = models.TextField("Refresh Token", blank=True, null=True)
@@ -60,6 +60,7 @@ class Post(models.Model):
     postPublished = models.BooleanField(default = True)
     postDate = models.DateTimeField("Date Published")
     postImage = models.ImageField(upload_to='images/', null=True, blank=True)
+    postImageAWS = models.TextField(null=True, blank=True)
 
     user = models.ForeignKey(User, on_delete = models.CASCADE)
 

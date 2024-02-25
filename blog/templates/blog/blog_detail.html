@@ -14,7 +14,7 @@
     <div class="images-section">
         <div class="larg-img">
             {% load static %}
-            <img src="{% static 'blog/images/' %}{{ post.postImage }}" />
+            <img src="{{ post.postImageAWS }}">
         </div>
         
     </div> <!-- End of Images Section-->

@@ -33,7 +33,7 @@ SECRET_KEY = "django-insecure-2t))0ounvj7a^&1ienfd)au&*5ia@)luj^!%+kph@lf0vr$#g@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost', '0.0.0.0', '13.55.226.62']
+ALLOWED_HOSTS = ['127.0.0.1','localhost', '0.0.0.0', '3.27.38.72']
 
 CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1',
@@ -114,9 +114,16 @@ ASGI_APPLICATION_TIMEOUT = 60
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "blogdb",
+        "USER": "l6",
+        "PASSWORD": "Hospitalplaylist@0610",
+        "HOST": "localhost",
+        "PORT": "3306",
+        'OPTIONS': {
+            'read_default_file': '/opt/lampp/etc/my.cnf',
+        }
     }
 }
 
@@ -303,3 +310,5 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_USERNAME_REQUIRED = False 
 ACCOUNT_EMAIL_REQUIRED = True
+
+AWS_STORAGE_BUCKET_NAME = 'blogdb061003'

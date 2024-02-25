@@ -37,6 +37,8 @@ from django.conf import settings
 from google.auth.transport import requests as google_requests
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
+import boto3
+import io
 
 def assign_role(id, role):
     user = User.objects.get(pk = id)
@@ -295,6 +297,8 @@ class PostCreateView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = PostCreateForm(request.POST)
+        print(request.POST)
+        print(request.FILES)
         user = request.user
 
         if form.is_valid():
@@ -311,12 +315,21 @@ class PostCreateView(LoginRequiredMixin, View):
                 if schedule_post:
                     schedule_date_str = request.POST.get("scheduleDate")
 
+                    s3_client = boto3.client('s3')
+                    image_file = request.FILES
+                    file_name = f"images/{image_file}"
+                    s3_client.upload_fileobj(image_file, settings.AWS_STORAGE_BUCKET_NAME, file_name)
+
+                    s3_image_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{file_name}"
+
+                    postImageAWS = s3_image_url
+
                     post1 = Post(
                     postID=form.cleaned_data['postID'],
                     postTitle=form.cleaned_data['postTitle'],
                     postContent=form.cleaned_data['postContent'],
                     postDate=form.cleaned_data['postDate'],
-                    postImage=form.cleaned_data['postImage'],
+                    postImageAWS=postImageAWS,
                     postPublished = False,
                     user=user
                     )
@@ -345,12 +358,33 @@ class PostCreateView(LoginRequiredMixin, View):
 
                                 messages.success(request, f'Bạn đã lên lịch đăng bài thành công trong Calendar với id = {event_id}.')
                 else:
+                    s3_client = boto3.client('s3')
+                    print(form.cleaned_data)
+                    print(form.cleaned_data['postImage'])
+                    image_file = request.FILES['postImage']
+                    print(image_file)
+                    file_contents = image_file.read()
+
+                    temp_file = io.BytesIO()
+                    temp_file.write(file_contents)
+                    temp_file.seek(0)
+
+                    file_name = f"images/{image_file.name}"
+                    print(file_name)
+
+                    s3_client.upload_fileobj(temp_file, settings.AWS_STORAGE_BUCKET_NAME, file_name)
+
+                    s3_image_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{file_name}"
+                    print(s3_image_url)
+
+                    postImageAWS = s3_image_url
+
                     post1 = Post(
                     postID=form.cleaned_data['postID'],
                     postTitle=form.cleaned_data['postTitle'],
                     postContent=form.cleaned_data['postContent'],
                     postDate=form.cleaned_data['postDate'],
-                    postImage=form.cleaned_data['postImage'],
+                    postImageAWS=postImageAWS,
                     postPublished = True,
                     user=user
                     )
@@ -379,13 +413,17 @@ class PostCreateView(LoginRequiredMixin, View):
     
 @receiver(post_save, sender=Post)
 def post_init(sender, instance, created, **kwargs):
-    user = User.objects.get(pk=instance.user_id)
+    user = User.objects.get(pk=instance.user.id)
     print(user.username)
     print(user.id)
     if created:
+        print(user.username)
+        print(instance.postTitle)
+        message=f"{user.username} create a blog named: {instance.postTitle}"
+        print(message)
         DeletedPostNotification.objects.create(
             user=user,
-            message=f"{user.username} đã tạo một bài viết: {instance.postTitle}"
+            message=f"{user.username} create a blog named: {instance.postTitle}"
         )
         channel_layer = get_channel_layer() 
         async_to_sync(channel_layer.group_send)("admin_group", {"type": "send_notification", "message": f"{user.username} đã tạo một bài viết: {instance.postTitle}"})
@@ -469,10 +507,9 @@ class RegistrationView(View):
 
         username = form.get('username')
         if User.objects.filter(username = username).exists():
-            form.add_error('username', 'Username already exists.')
+            return render(request, self.template_name, {'form': form})
         else:
             user = User(
-                id = form.get('id'),
                 username = form.get('username'),
                 password = form.get('password'),
                 birtday=form.get('birtday'),
@@ -487,7 +524,8 @@ class RegistrationView(View):
 
             role = form.get('role')
             print(role)
-            assign_role(form.get('id'), role)
+            print(user.id)
+            assign_role(user.id, role)
             return redirect('blog:login')
 
         self.logger.warning("Registration User failed")

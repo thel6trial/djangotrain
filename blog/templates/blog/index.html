@@ -37,7 +37,7 @@
 					{% if post.postPublished == True %}
 					<div class="product">
 						<a href="{% url 'blog:detail' pk=post.postID %}">
-                            <img src="{% static 'blog/images/' %}{{ post.postImage }}" />
+                            <img src="{{ post.postImageAWS }}">
 						</a>
 						<div class="product-detail">
 							<h3>{{ post.postTitle }}</h3>
@@ -101,6 +101,14 @@
 			</script>
 			{% else %}
             <p>No posts are available.</p>
+			<div class="product-content">
+				<div class="product">
+					<div class="product-detail" style ="display: flex;">
+						<a href="{% url 'blog:blogCreate' %}" style="margin-right: 30px;">Create Blog</a>
+						<a href="{% url 'blog:csv' %}">Import from CSV</a>
+					</div>						
+				</div>
+			</div>
             {% endif %} 
 
 	<script>
